@@ -4,10 +4,24 @@
 #include <iostream>
 #include <stack>
 #include <sstream>
+#include <cstdlib>
 
 #define SYMBOLS "+-*/"
 
-bool	isSymbol(std::string &s);
-bool	fillStack(std::string &expression, std::stack<int> stack);
+class RPN {
+    private :
+
+    public :
+        RPN();
+        ~RPN();
+        RPN(const RPN &r);
+        RPN &operator=(const RPN &r);
+
+        bool	isSymbol(std::string &s);
+        void    printStack(std::stack<double> &stack);
+        bool    calcul(std::string symbol, std::stack<double> &stack);
+        bool	fillStack(std::string &expression);
+};
+
 
 #endif

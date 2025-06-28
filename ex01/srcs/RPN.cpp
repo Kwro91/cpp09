@@ -1,6 +1,18 @@
 #include "../includes/RPN.hpp"
 
-bool	isSymbol(std::string &s){
+RPN::RPN() {}
+
+RPN::~RPN() {}
+
+RPN::RPN(const RPN &r) {(void)r;}
+
+RPN	&RPN::operator=(const RPN &r) {
+	(void)r;
+	return (*this);
+}
+
+
+bool	RPN::isSymbol(std::string &s){
 	if (s.size() != 1)
 		return (false);
 	
@@ -11,22 +23,22 @@ bool	isSymbol(std::string &s){
 	return (false);
 }
 
-void	printStack(std::stack<int> stack){
-	std::stack<int> tmp = stack;
-	while (!tmp.empty())
+void	RPN::printStack(std::stack<double> &stack){
+	// std::stack<double> tmp = stack;
+	while (!stack.empty())
 	{
-		std::cout << tmp.top() << " ";
-		tmp.pop();
+		std::cout << stack.top() << " ";
+		stack.pop();
 	}
 	std::cout << std::endl;
 }
 
-bool	calcul(std::string symbol, std::stack<int> &stack){
+bool	RPN::calcul(std::string symbol, std::stack<double> &stack){
 	if (stack.size() <= 1)
 		return (std::cerr << "Error: not enough number." << std::endl, false);
-	int	n2 = stack.top();
+	double	n2 = stack.top();
 	stack.pop();
-	int	n1 = stack.top();
+	double	n1 = stack.top();
 	stack.pop();
 
 	if (symbol == "+")
@@ -41,21 +53,22 @@ bool	calcul(std::string symbol, std::stack<int> &stack){
 			return (std::cerr << "Error: divide by zero." << std::endl, false);
 		stack.push(n1 / n2);
 	}
-	return (false);
+	return (true);
 }
 
-bool	fillStack(std::string &expression, std::stack<int> stack){
+bool	RPN::fillStack(std::string &expression){
 	std::istringstream	iss(expression);
 	std::string	str;
+	std::stack<double> stack;
 
 	while(iss >> str)
 	{
 		if ((str.size() != 1) || (!std::isdigit(str[0]) && !isSymbol(str)))
 			return (std::cerr << "Error: Wrong input -> " << str[0] << "." << std::endl, true);
 		else if (std::isdigit(str[0]))
-			stack.push(str[0] - 48);
+			stack.push(std::atof(str.c_str()));
 		else if (isSymbol(str))
-			if (calcul(str, stack))
+			if (!calcul(str, stack))
 				return (1);
 	}
 	printStack(stack);
