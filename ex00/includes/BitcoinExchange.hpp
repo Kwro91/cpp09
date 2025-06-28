@@ -34,12 +34,6 @@ class Btc {
 		bool	isLeapYear(int year) const;
 		bool	checkFormat(std::string date) const;
 		float	getExchangeRate(const std::string &date) const;
-
-		// void								setData(std::string date, float value);
-		// std::map<std::string, float>		getData();
-
-		// std::vector<std::string>			splitString(std::string line, char limiter);
-		// void								readFile(std::string path);
 };
 
 #endif

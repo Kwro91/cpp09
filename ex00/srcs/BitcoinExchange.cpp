@@ -1,29 +1,11 @@
 #include "../includes/BitcoinExchange.hpp"
 
-// const char*	WHITESPACE = " \t\n\r";
-
-// static std::string	&ltrim(std::string &str){
-// 	str.erase(0, str.find_first_not_of(WHITESPACE));
-// 	return (str);
-// }
-
-// static std::string	&rtrim(std::string &str){
-// 	str.erase(str.find_last_not_of(WHITESPACE) +1);
-// 	return (str);
-// }
-
-// static std::string	&trim(std::string &str){ //remove left and right whitespace on string
-// 	return (ltrim(rtrim(str)));
-// }
-
-//////////////////////// CLASS ///
-
 Btc::Btc(){}
 
 Btc::~Btc(){}
 
 Btc::Btc(const Btc &b){
-	*this = b;
+	_data = b._data;
 }
 
 Btc	&Btc::operator=(const Btc &b) {
@@ -39,7 +21,7 @@ Btc	&Btc::operator=(const Btc &b) {
 int	Btc::fillMap() {
 	std::ifstream	infile("data.csv");
 	if (infile.is_open() == false)
-		return (std::cerr << "Open data.csv failed" << std::endl, 1);
+		return (std::cerr << "Error: open data.csv failed." << std::endl, 1);
 	
 	std::string	line;
 	std::getline(infile, line);
@@ -52,7 +34,7 @@ int	Btc::fillMap() {
 		float	value;
 		std::istringstream	iss(valueStr);
 		if (!(iss >> value))
-			return (std::cerr << "Error: bad value " << valueStr << std::endl, 2);
+			return (std::cerr << "Error: bad value." << valueStr << std::endl, 2);
 		_data[date] = value;
 	}
 	infile.close();
@@ -67,7 +49,7 @@ void	Btc::printMap() const {
 int	Btc::recupInput(char *av) const {
 	std::ifstream input(av);
 	if (!input.is_open())
-		return (std::cerr << "Open " << av << " failed" << std::endl, 1);
+		return (std::cerr << "Error: open " << av << " failed." << std::endl, 1);
 	std::string line;
 	std::getline(input, line);
 	std::string			date;
@@ -79,11 +61,11 @@ int	Btc::recupInput(char *av) const {
 		float				rate = 0.0;
 		std::string 		rest;
 		if (iss >> date >> sep >> value >> rest)
-			std::cerr << "Error: bad line :" << line << std::endl;
+			std::cerr << "Error: bad line : " << line << std::endl;
 		else if (parseValue(value))
 			;
 		else if (parseDate(date))
-			std::cerr << "Error: bad input " << date << std::endl;
+			std::cerr << "Error: bad input : " << date << std::endl;
 		else
 		{
 			rate = getExchangeRate(date);
@@ -153,99 +135,3 @@ float Btc::getExchangeRate(const std::string &date) const
 		it--;
 	return (it->second);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// void	Btc::setData(std::string date, float value) {
-	
-// 	// _data.insert(std::pair<std::string , float>(date, value)); 
-// 	_data.insert(std::make_pair(date, value));
-// }
-
-// std::map<std::string, float>	Btc::getData() {
-// 	return (_data);
-// }
-
-// std::vector<std::string>	Btc::splitString(std::string line, char limiter) {
-// 	std::vector<std::string> split;
-// 	std::string str = "";
-// 	for (size_t i = 0; i < line.length(); i++)
-// 	{
-// 		if (str[i] != limiter)
-// 		{
-// 			str += line[i];
-// 		}
-// 		else
-// 		{
-// 			split.push_back(str);
-// 			while (line[i] == limiter)
-// 				i++;
-// 			i--;
-// 			str = "";
-// 		}
-// 	}
-// 	split.push_back(str);
-// 	return (split);
-// }
-
-// void	Btc::readFile(std::string path) {
-// 	bool b = false;
-// 	std::ifstream file(path.c_str());
-// 	if (!file.is_open())
-// 	{
-// 		return ;
-// 	}
-// 	std::string line;
-// 	std::vector<std::string> tab;
-// 	while(std::getline(file, line))
-// 	{
-// 		if (b == false)
-// 		{
-// 			b = true;
-// 			continue;
-// 		}
-// 		tab = splitString(line, '|');
-// 		if (tab[1].length() == 0 || tab.size() < 2)
-// 		{
-// 			std::cerr << "Error: bad input " << tab[0] << std::endl;
-// 			continue;
-// 		}
-// 		std::map<std::string, float>::iterator it = _data.upper_bound(trim(tab[0]));
-// 		if (it != _data.end())
-// 		{
-// 			std::pair<std::string, float> p = *(--it);
-// 			try {
-
-// 				if (std::atof(tab[1].c_str()) > 1000)
-// 				{
-// 					std::cerr << "Error: number > 1000." << std::endl;
-// 				}
-// 				else if (std::atof(tab[1].c_str()) < 0)
-// 				{
-// 					std::cerr << "Error: negative number." << std::endl;
-// 				}
-// 				else
-// 				std::cout << tab[0] << " : " << tab[1] << " = " << std::atof(tab[1].c_str()) * p.second << std::endl;
-// 			}catch (const std::exception &e)
-// 			{
-// 				(void)e;
-// 				std::cerr << "Error: not a number." << std::endl;
-// 				continue;
-// 			}
-// 		}
-// 	}
-// 	file.close();
-// }
