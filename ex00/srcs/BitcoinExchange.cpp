@@ -21,7 +21,7 @@ Btc	&Btc::operator=(const Btc &b) {
 int	Btc::fillMap() {
 	std::ifstream	infile("data.csv");
 	if (infile.is_open() == false)
-		return (std::cerr << "Error: open data.csv failed." << std::endl, 1);
+		return (std::cerr << "Error: could not open data.csv" << std::endl, 1);
 	
 	std::string	line;
 	std::getline(infile, line);
@@ -49,10 +49,10 @@ void	Btc::printMap() const {
 int	Btc::recupInput(char *av) const {
 	std::ifstream input(av);
 	if (!input.is_open())
-		return (std::cerr << "Error: open " << av << " failed." << std::endl, 1);
+		return (std::cerr << "Error: could not open " << av << std::endl, 1);
 	std::string line;
 	std::getline(input, line);
-	std::string			date;
+	std::string	date;
 	while (std::getline(input, line))
 	{
 		std::istringstream	iss(line);
@@ -62,7 +62,7 @@ int	Btc::recupInput(char *av) const {
 		std::string 		rest;
 		if (iss >> date >> sep >> value >> rest)
 			std::cerr << "Error: bad line : " << line << std::endl;
-		else if (parseValue(value))
+		else if (parseValue(value) != 0)
 			;
 		else if (parseDate(date))
 			std::cerr << "Error: bad input : " << date << std::endl;
@@ -71,7 +71,6 @@ int	Btc::recupInput(char *av) const {
 			rate = getExchangeRate(date);
 			std::cout << date << ": " << value << " = " << rate * value << std::endl;
 		}
-
 	}
 	input.close();
 	return (0);
@@ -106,7 +105,10 @@ int	Btc::parseDate(std::string date) const{
 		else
 			maxDays = 28;
 	}
-	return (!(day <= maxDays));
+
+	if (day > maxDays)
+		return (1);
+	return (0);
 }
 
 bool	Btc::checkFormat(std::string date) const{
@@ -128,7 +130,7 @@ bool Btc::isLeapYear(int year) const{
 
 float Btc::getExchangeRate(const std::string &date) const
 {
-	std::map<std::string, float>::const_iterator it = _data.lower_bound(date);
+	std::map<std::string, float>::const_iterator it = _data.lower_bound(date); //return value >= date or date.end()
 	if (it == _data.end())
 		return ((--it)->second);
 	if (it->first > date)
